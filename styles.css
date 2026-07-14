@@ -89,15 +89,14 @@ a {
   color: #fff;
 }
 
-.brand-mark {
-  display: grid;
+.brand-logo {
+  display: block;
   width: 36px;
   height: 36px;
-  place-items: center;
+  padding: 5px;
   border-radius: 50%;
-  background: var(--blue);
-  color: #fff;
-  font-weight: 800;
+  background: #fff;
+  object-fit: contain;
 }
 
 .brand-name {
@@ -328,6 +327,26 @@ a {
     #f8fbff;
 }
 
+.card-ielts,
+.card-cambridge {
+  place-items: center;
+}
+
+.card-ielts::after,
+.card-cambridge::after {
+  content: "";
+}
+
+.card-ielts img,
+.card-cambridge img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: min(190px, 72%);
+  max-height: 82px;
+  object-fit: contain;
+}
+
 .card-english,
 .card-teacher,
 .card-step {
@@ -392,10 +411,12 @@ a {
   position: relative;
   z-index: 3;
   display: grid;
+  align-content: center;
   justify-items: center;
   width: min(980px, 100%);
   margin: 0 auto;
   padding: 0;
+  min-height: 100%;
   text-align: center;
 }
 
