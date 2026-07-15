@@ -24,6 +24,204 @@ const roadmap = document.querySelector(".roadmap-section");
 const roadmapList = document.querySelector(".roadmap-list");
 const roadmapSteps = document.querySelectorAll(".roadmap-step");
 const roadmapRibbonPath = document.querySelector(".roadmap-ribbon-path");
+const programCards = Array.from(document.querySelectorAll(".program-card"));
+const programHeadlineWord = document.querySelector("[data-program-headline-word]");
+const problemSection = document.querySelector(".problem-section");
+const problemObjects = Array.from(document.querySelectorAll(".learning-object"));
+
+if (problemSection && problemObjects.length > 0) {
+  const edgePadding = 10;
+  const pointerRadius = 96;
+  const objects = [];
+  let bounds = problemSection.getBoundingClientRect();
+  let pointer = null;
+  let lastTime = performance.now();
+  let headlineBounds = null;
+
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+  const updateHeadlineBounds = () => {
+    const content = problemSection.querySelector(".problem-content");
+
+    if (!content) {
+      headlineBounds = null;
+      return;
+    }
+
+    const rect = content.getBoundingClientRect();
+    headlineBounds = {
+      left: rect.left - bounds.left - 34,
+      right: rect.right - bounds.left + 34,
+      top: rect.top - bounds.top - 28,
+      bottom: rect.bottom - bounds.top + 28,
+      centerX: rect.left - bounds.left + rect.width / 2,
+      centerY: rect.top - bounds.top + rect.height / 2,
+    };
+  };
+
+  const getRotation = (element) => {
+    const rawRotation = getComputedStyle(element).getPropertyValue("--rotate").trim();
+    const parsedRotation = Number.parseFloat(rawRotation);
+    return Number.isFinite(parsedRotation) ? parsedRotation : 0;
+  };
+
+  const measureProblemObjects = () => {
+    bounds = problemSection.getBoundingClientRect();
+    updateHeadlineBounds();
+
+    if (objects.length > 0) {
+      objects.forEach((object) => {
+        const rect = object.element.getBoundingClientRect();
+        object.width = rect.width;
+        object.height = rect.height;
+        object.x = clamp(object.x, edgePadding, Math.max(edgePadding, bounds.width - object.width - edgePadding));
+        object.y = clamp(object.y, edgePadding, Math.max(edgePadding, bounds.height - object.height - edgePadding));
+      });
+      return;
+    }
+
+    objects.length = 0;
+
+    problemObjects.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      const maxX = Math.max(edgePadding, bounds.width - rect.width - edgePadding);
+      const maxY = Math.max(edgePadding, bounds.height - rect.height - edgePadding);
+      const x = clamp(rect.left - bounds.left, edgePadding, maxX);
+      const y = clamp(rect.top - bounds.top, edgePadding, maxY);
+      const direction = index % 2 === 0 ? 1 : -1;
+
+      element.style.left = "0";
+      element.style.top = "0";
+      element.style.right = "auto";
+      element.style.bottom = "auto";
+      element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${getRotation(element)}deg)`;
+
+      objects.push({
+        element,
+        x,
+        y,
+        vx: 0,
+        vy: 0,
+        width: rect.width,
+        height: rect.height,
+        rotation: getRotation(element),
+        baseRotation: getRotation(element),
+        vr: 0,
+      });
+    });
+  };
+
+  const pushObjectFromPointer = (object, event, strength = 0.72) => {
+    bounds = problemSection.getBoundingClientRect();
+
+    const pointerX = event.clientX - bounds.left;
+    const pointerY = event.clientY - bounds.top;
+    const centerX = object.x + object.width / 2;
+    const centerY = object.y + object.height / 2;
+    const dx = centerX - pointerX;
+    const dy = centerY - pointerY;
+    const distance = Math.max(1, Math.hypot(dx, dy));
+
+    object.vx += (dx / distance) * strength;
+    object.vy += (dy / distance) * strength;
+    object.vr += (dx / distance) * strength * 0.012;
+  };
+
+  const setPointer = (event) => {
+    bounds = problemSection.getBoundingClientRect();
+    pointer = {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    };
+  };
+
+  const clearPointer = () => {
+    pointer = null;
+  };
+
+  const animateProblemObjects = (time) => {
+    const delta = Math.min(32, time - lastTime);
+    lastTime = time;
+    bounds = problemSection.getBoundingClientRect();
+    updateHeadlineBounds();
+
+    objects.forEach((object) => {
+      const centerX = object.x + object.width / 2;
+      const centerY = object.y + object.height / 2;
+
+      if (pointer) {
+        const dx = centerX - pointer.x;
+        const dy = centerY - pointer.y;
+        const distance = Math.max(1, Math.hypot(dx, dy));
+        const reach = pointerRadius + Math.max(object.width, object.height) * 0.45;
+
+        if (distance < reach) {
+          const force = (1 - distance / reach) * 0.12;
+          object.vx += (dx / distance) * force;
+          object.vy += (dy / distance) * force;
+          object.vr += (dx / distance) * force * 0.006;
+        }
+      }
+
+      if (
+        headlineBounds &&
+        centerX > headlineBounds.left &&
+        centerX < headlineBounds.right &&
+        centerY > headlineBounds.top &&
+        centerY < headlineBounds.bottom
+      ) {
+        const dx = centerX - headlineBounds.centerX;
+        const dy = centerY - headlineBounds.centerY;
+        const distance = Math.max(1, Math.hypot(dx, dy));
+        object.vx += (dx / distance) * 0.035;
+        object.vy += (dy / distance) * 0.035;
+      }
+
+      object.x += object.vx * delta;
+      object.y += object.vy * delta;
+      object.rotation += object.vr * delta;
+
+      const maxX = Math.max(edgePadding, bounds.width - object.width - edgePadding);
+      const maxY = Math.max(edgePadding, bounds.height - object.height - edgePadding);
+
+      if (object.x <= edgePadding || object.x >= maxX) {
+        object.x = clamp(object.x, edgePadding, maxX);
+        object.vx *= -0.86;
+      }
+
+      if (object.y <= edgePadding || object.y >= maxY) {
+        object.y = clamp(object.y, edgePadding, maxY);
+        object.vy *= -0.86;
+      }
+
+      object.vx = clamp(object.vx * 0.88, -0.85, 0.85);
+      object.vy = clamp(object.vy * 0.88, -0.85, 0.85);
+      object.vr = clamp(object.vr * 0.86, -0.025, 0.025);
+      object.rotation += (object.baseRotation - object.rotation) * 0.025;
+
+      object.element.style.transform = `translate3d(${object.x}px, ${object.y}px, 0) rotate(${object.rotation}deg)`;
+      object.element.style.left = "0";
+      object.element.style.top = "0";
+    });
+
+    window.requestAnimationFrame(animateProblemObjects);
+  };
+
+  measureProblemObjects();
+  objects.forEach((object) => {
+    object.element.addEventListener("pointerenter", (event) => {
+      pushObjectFromPointer(object, event);
+    });
+
+    object.element.addEventListener("pointermove", (event) => {
+      pushObjectFromPointer(object, event, 0.18);
+    });
+  });
+  window.requestAnimationFrame(animateProblemObjects);
+  problemSection.addEventListener("pointermove", setPointer);
+  problemSection.addEventListener("pointerleave", clearPointer);
+  window.addEventListener("resize", measureProblemObjects);
+}
 
 if (roadmap && roadmapList && roadmapSteps.length > 0) {
   let roadmapRibbonLength = 0;
@@ -122,188 +320,65 @@ if (roadmap && roadmapList && roadmapSteps.length > 0) {
   }
 }
 
-const testimonialsCarousel = document.querySelector(".testimonials-carousel");
-
-if (testimonialsCarousel) {
-  const viewport = testimonialsCarousel.querySelector(".testimonials-viewport");
-  const track = testimonialsCarousel.querySelector(".testimonials-track");
-  const cards = Array.from(testimonialsCarousel.querySelectorAll(".testimonial-card"));
-  const originalCards = cards.filter((card) => !card.hasAttribute("aria-hidden"));
-  const dots = Array.from(testimonialsCarousel.querySelectorAll("[data-testimonial-dot]"));
-  const previousButton = testimonialsCarousel.querySelector("[data-testimonial-prev]");
-  const nextButton = testimonialsCarousel.querySelector("[data-testimonial-next]");
-
-  let offset = 0;
-  let loopWidth = 0;
-  let cardStep = 0;
-  let activeIndex = 0;
-  let lastTimestamp = 0;
-  let isPaused = false;
-  let isDragging = false;
-  let dragStartX = 0;
-  let dragStartOffset = 0;
-  let resumeTimer = 0;
-  const speed = 26;
-
-  const measureTestimonials = () => {
-    const firstCard = originalCards[0];
-    const lastOriginalCard = originalCards[originalCards.length - 1];
-
-    if (!firstCard || !lastOriginalCard) {
-      return;
-    }
-
-    const firstRect = firstCard.getBoundingClientRect();
-    const lastRect = lastOriginalCard.getBoundingClientRect();
-
-    loopWidth = lastRect.right - firstRect.left + parseFloat(getComputedStyle(track).gap || 0);
-    cardStep = originalCards[1]
-      ? originalCards[1].offsetLeft - originalCards[0].offsetLeft
-      : firstRect.width;
+if (programCards.length > 0 && programHeadlineWord) {
+  const setProgramHeadline = (card) => {
+    programHeadlineWord.textContent = card.dataset.programHeadline || "English";
   };
 
-  const normalizeOffset = () => {
-    if (loopWidth <= 0) {
-      return;
-    }
-
-    while (offset >= loopWidth) {
-      offset -= loopWidth;
-    }
-
-    while (offset < 0) {
-      offset += loopWidth;
-    }
+  const resetProgramHeadline = () => {
+    programHeadlineWord.textContent = "English";
   };
 
-  const updateDots = () => {
-    if (cardStep <= 0 || originalCards.length === 0) {
-      return;
-    }
+  programCards.forEach((card) => {
+    card.addEventListener("mouseenter", () => setProgramHeadline(card));
+    card.addEventListener("focusin", () => setProgramHeadline(card));
+    card.addEventListener("mouseleave", resetProgramHeadline);
+    card.addEventListener("focusout", resetProgramHeadline);
+  });
+}
 
-    activeIndex = Math.round(offset / cardStep) % originalCards.length;
+const testimonialCards = Array.from(document.querySelectorAll(".testimonial-card"));
+const testimonialCta = document.querySelector("[data-testimonial-cta]");
+const solutionCards = Array.from(document.querySelectorAll(".solution-card"));
 
-    dots.forEach((dot, index) => {
-      dot.classList.toggle("is-active", index === activeIndex);
-      dot.setAttribute("aria-current", index === activeIndex ? "true" : "false");
+if (solutionCards.length > 0) {
+  const setActiveSolutionCard = (activeCard) => {
+    solutionCards.forEach((card) => {
+      card.classList.toggle("is-selected", card === activeCard);
     });
   };
 
-  const renderTestimonials = () => {
-    normalizeOffset();
-    track.style.transform = `translate3d(${-offset}px, 0, 0)`;
-    updateDots();
-  };
-
-  const pauseTestimonials = () => {
-    isPaused = true;
-    window.clearTimeout(resumeTimer);
-  };
-
-  const resumeTestimonials = (delay = 0) => {
-    window.clearTimeout(resumeTimer);
-
-    if (reduceMotion.matches) {
-      return;
-    }
-
-    resumeTimer = window.setTimeout(() => {
-      isPaused = false;
-      lastTimestamp = performance.now();
-    }, delay);
-  };
-
-  const moveToSlide = (index) => {
-    offset = index * cardStep;
-    renderTestimonials();
-  };
-
-  const moveByCards = (direction) => {
-    offset += direction * cardStep;
-    renderTestimonials();
-  };
-
-  const animateTestimonials = (timestamp) => {
-    if (!lastTimestamp) {
-      lastTimestamp = timestamp;
-    }
-
-    const delta = timestamp - lastTimestamp;
-    lastTimestamp = timestamp;
-
-    if (!isPaused && !reduceMotion.matches && !isDragging) {
-      offset += (speed * delta) / 1000;
-      renderTestimonials();
-    }
-
-    window.requestAnimationFrame(animateTestimonials);
-  };
-
-  testimonialsCarousel.addEventListener("mouseenter", pauseTestimonials);
-  testimonialsCarousel.addEventListener("mouseleave", () => resumeTestimonials(350));
-  testimonialsCarousel.addEventListener("focusin", pauseTestimonials);
-  testimonialsCarousel.addEventListener("focusout", () => resumeTestimonials(350));
-
-  viewport?.addEventListener("pointerdown", (event) => {
-    isDragging = true;
-    dragStartX = event.clientX;
-    dragStartOffset = offset;
-    pauseTestimonials();
-    viewport.setPointerCapture?.(event.pointerId);
-  });
-
-  viewport?.addEventListener("pointermove", (event) => {
-    if (!isDragging) {
-      return;
-    }
-
-    offset = dragStartOffset - (event.clientX - dragStartX);
-    renderTestimonials();
-  });
-
-  const endDrag = () => {
-    if (!isDragging) {
-      return;
-    }
-
-    isDragging = false;
-    resumeTestimonials(900);
-  };
-
-  viewport?.addEventListener("pointerup", endDrag);
-  viewport?.addEventListener("pointercancel", endDrag);
-
-  previousButton?.addEventListener("click", () => {
-    pauseTestimonials();
-    moveByCards(-1);
-    resumeTestimonials(1200);
-  });
-
-  nextButton?.addEventListener("click", () => {
-    pauseTestimonials();
-    moveByCards(1);
-    resumeTestimonials(1200);
-  });
-
-  dots.forEach((dot) => {
-    dot.addEventListener("click", () => {
-      pauseTestimonials();
-      moveToSlide(Number(dot.dataset.testimonialDot || 0));
-      resumeTestimonials(1200);
+  const resetSolutionCards = () => {
+    solutionCards.forEach((card) => {
+      card.classList.remove("is-selected");
     });
+  };
+
+  solutionCards.forEach((card) => {
+    card.setAttribute("tabindex", "0");
+    card.addEventListener("mouseenter", () => setActiveSolutionCard(card));
+    card.addEventListener("focus", () => setActiveSolutionCard(card));
+    card.addEventListener("mouseleave", resetSolutionCards);
+    card.addEventListener("blur", resetSolutionCards);
   });
+}
 
-  window.addEventListener("resize", () => {
-    measureTestimonials();
-    renderTestimonials();
+if (testimonialCards.length > 0 && testimonialCta) {
+  const setActiveTestimonial = (activeCard) => {
+    testimonialCards.forEach((card) => {
+      card.classList.toggle("is-selected", card === activeCard);
+    });
+
+    const program = activeCard.dataset.testimonialProgram || "learning";
+    const target = activeCard.dataset.testimonialTarget || "#programs";
+
+    testimonialCta.textContent = `Start your ${program} path`;
+    testimonialCta.setAttribute("href", target);
+  };
+
+  testimonialCards.forEach((card) => {
+    card.setAttribute("tabindex", "0");
+    card.addEventListener("mouseenter", () => setActiveTestimonial(card));
+    card.addEventListener("focus", () => setActiveTestimonial(card));
   });
-
-  measureTestimonials();
-  renderTestimonials();
-
-  if (reduceMotion.matches) {
-    pauseTestimonials();
-  } else {
-    window.requestAnimationFrame(animateTestimonials);
-  }
 }

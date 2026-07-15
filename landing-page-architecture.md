@@ -313,7 +313,9 @@ After explaining the process, introduce the available paths students can choose 
 
 ### Section purpose
 
-Present the three core offers clearly: English courses, IELTS preparation, and private tutors.
+Present Tutorings' verified learning programs in a clean, premium, easy-to-scan layout that helps users quickly understand their options.
+
+This section should feel closer to a premium SaaS pricing or feature-selection section than a traditional education course list.
 
 ### User goal
 
@@ -325,40 +327,181 @@ Route users toward the most relevant lead path without overwhelming them.
 
 ### Headline direction
 
-Choose the path that matches your goal.
+Learn with tutors who are masters in English.
+
+Alternative direction:
+
+- Choose the path that matches your goal.
 
 ### Supporting content
 
-Program directions:
+Use only verified Tutorings programs from the content inventory. Do not invent additional programs.
 
-- English Courses: structured English improvement from beginner to advanced, CEFR-based, private one-to-one lessons, progress reports.
-- IELTS Preparation: focused exam preparation, 45-day structure, four skills, correction, strategy, IELTS-specialized teachers.
-- Private Tutors: personalized guidance, bilingual support, flexible scheduling, fixed teacher continuity.
+Current programs:
 
-The upcoming app can be lightly referenced as practice support, but should not overpower the three core offers.
+- General English.
+- IELTS Preparation.
+- STEP Preparation.
+- Live Private Classes.
 
-### Primary CTA
+Each program card should include:
 
-Each program can have a contextual CTA:
+- Program title.
+- One short supporting description.
+- 3-5 key benefits.
+- Primary CTA.
+- Optional small icon.
 
-- Improve My English
-- Prepare for IELTS
-- Find a Private Tutor
+Keep copy concise and easy to scan.
 
-### Recommended layout
+### Program content direction
 
-Use three premium program panels. They should be visually related but distinct by goal. Prioritize audience and outcome over long feature lists.
+#### General English
+
+Short description:
+
+Build your English from beginner to advanced through a structured CEFR-based path.
+
+Key benefits:
+
+- A0 to C1 level path.
+- Private 1-on-1 lessons.
+- Fixed teacher throughout the level.
+- Progress reports and certificate.
+- Cambridge One access.
+
+Primary CTA:
+
+- Explore General English.
+
+#### IELTS Preparation
+
+Short description:
+
+Prepare for IELTS with private lessons, four-skill practice, correction, and exam strategy.
+
+Key benefits:
+
+- 45-day preparation program.
+- 18 private live lessons.
+- Reading, Writing, Listening, and Speaking.
+- IELTS-specialized teachers.
+- Practice, assignments, correction, and guidance.
+
+Primary CTA:
+
+- Prepare for IELTS.
+
+Featured card:
+
+- This should be the visually emphasized middle card on desktop.
+
+#### STEP Preparation
+
+Short description:
+
+Study focused STEP material built around real exam patterns and a clear +90 target.
+
+Key benefits:
+
+- Focused STEP course.
+- Real STEP question patterns.
+- Grammar, reading, and listening practice.
+- 75 days of course access.
+- Private community for questions.
+
+Primary CTA:
+
+- Start STEP Preparation.
+
+#### Live Private Classes
+
+Short description:
+
+Learn one-to-one with a bilingual tutor who follows your goals, schedule, and progress.
+
+Key benefits:
+
+- Private live sessions.
+- Bilingual Arabic and English teachers.
+- Flexible scheduling.
+- Personalized support.
+- Teacher continuity during the level.
+
+Primary CTA:
+
+- Find a Private Tutor.
+
+### Layout
+
+Desktop:
+
+- Three-column grid.
+- Large equal-width cards.
+- Consistent spacing between cards.
+- IELTS Preparation appears as the center featured card in the first row.
+- The fourth card wraps naturally into the next row while preserving the same card width and visual system.
+
+Tablet:
+
+- Two-column layout.
+
+Mobile:
+
+- One card per row.
+
+### Featured Card
+
+The middle card should be visually emphasized.
+
+Use:
+
+- Tutorings blue background.
+- White text.
+- Slightly larger scale.
+- Stronger shadow.
+
+The emphasis should feel elegant and premium, not exaggerated. Other cards remain white with subtle borders and soft shadows.
+
+### Card design
+
+Cards should feel premium and spacious.
+
+Use:
+
+- Large corner radius.
+- Generous internal padding.
+- Subtle border.
+- Soft shadow.
+- Strong typography hierarchy.
+
+Each card should contain:
+
+1. Program name.
+2. Short description.
+3. Benefits list.
+4. Primary CTA button.
+
+The cards should not feel crowded. Prioritize clarity over dense program details, pricing tables, or long feature lists.
 
 ### Visual concept
 
-Each program appears as a structured route inside the Tutorings system. English is the foundation path, IELTS is the exam-focused path, tutoring is the personalized support path.
+Each program appears as a structured route inside the Tutorings system:
+
+- General English is the foundation path.
+- IELTS Preparation is the exam-focused path and featured option.
+- STEP Preparation is the Saudi exam-focused path.
+- Live Private Classes are the personalized tutor-support path.
 
 ### Interaction or animation ideas
 
-High-level only:
+Documented interaction direction only. Do not implement yet.
 
-- Restrained hover or focus states.
-- Reveal concise details such as duration, format, outcome, or next step.
+- Subtle lift on hover.
+- Border becomes Tutorings blue on hover.
+- Featured card keeps its emphasis during hover and focus.
+- CTA button slightly animates on hover.
+- Smooth transitions.
 
 ### Transition into the next section
 
