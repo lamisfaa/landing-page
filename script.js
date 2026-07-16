@@ -345,22 +345,6 @@ const choiceSlides = [
       visual: ["مدرب", "خطة", "أنت"],
     },
   },
-  {
-    theme: "guarantee",
-    target: 1,
-    suffix: "st",
-    logo: "https://tutorings.sa/wp-content/uploads/2024/09/Artboard-124@4x-8-3.webp",
-    en: {
-      title: "Golden Guarantee",
-      description: "Try the first live session with Golden Guarantee confidence.",
-      visual: ["Trial", "Gold", "OK"],
-    },
-    ar: {
-      title: "الضمان الذهبي",
-      description: "جرّب أول محاضرة مباشرة بثقة الضمان الذهبي.",
-      visual: ["تجربة", "ذهبي", "OK"],
-    },
-  },
 ];
 
 let choiceIndex = 0;

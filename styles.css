@@ -1900,15 +1900,13 @@ a {
   justify-self: center;
   margin-top: 48px;
   padding: 0 21px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
-  background:
-    linear-gradient(110deg, rgba(255, 255, 255, 0.34) 0 18%, transparent 36%),
-    linear-gradient(96deg, #f8c84c 0%, #d99a16 54%, #a86b08 100%);
+  background: linear-gradient(96deg, #3d87ff 0%, #1463ff 100%);
   color: #fff;
   font-size: 16px;
   font-weight: 800;
-  box-shadow: 0 16px 34px rgba(217, 154, 22, 0.24);
+  box-shadow: 0 16px 34px rgba(20, 99, 255, 0.2);
   transition:
     background 180ms ease,
     border-color 180ms ease,
@@ -1918,20 +1916,7 @@ a {
 }
 
 .program-button::before {
-  position: absolute;
-  inset: -60% auto -60% -42%;
-  width: 34%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.72),
-    transparent
-  );
-  content: "";
-  opacity: 0.72;
-  transform: skewX(-18deg) translateX(0);
-  animation: programButtonShine 3.2s ease-in-out infinite;
-  pointer-events: none;
+  display: none;
 }
 
 .program-button::after {
@@ -1940,16 +1925,14 @@ a {
 
 .program-button:hover,
 .program-button:focus-visible {
-  border-color: rgba(255, 255, 255, 0.32);
-  background:
-    linear-gradient(110deg, rgba(255, 255, 255, 0.38) 0 18%, transparent 36%),
-    linear-gradient(96deg, #ffd869 0%, #c8840d 58%, #8f5b08 100%);
-  box-shadow: 0 20px 42px rgba(217, 154, 22, 0.3);
+  border-color: rgba(255, 255, 255, 0.24);
+  background: linear-gradient(96deg, #4b94ff 0%, #2f7cff 100%);
+  box-shadow: 0 20px 42px rgba(20, 99, 255, 0.24);
   transform: translateY(-1px);
 }
 
 .program-button:focus-visible {
-  outline: 3px solid rgba(217, 154, 22, 0.24);
+  outline: 3px solid rgba(20, 99, 255, 0.24);
   outline-offset: 3px;
 }
 
@@ -2670,6 +2653,16 @@ a {
   max-width: 112px;
   height: 26px;
   object-fit: contain;
+}
+
+.partner-logo--idp img {
+  max-width: 202px;
+  height: 47px;
+}
+
+.partner-logo--cambridge img {
+  max-width: 132px;
+  height: 50px;
 }
 
 .site-footer {
@@ -4088,6 +4081,16 @@ a {
 
   .partner-logo {
     font-size: 17px;
+  }
+
+  .partner-logo--idp img {
+    max-width: 182px;
+    height: 42px;
+  }
+
+  .partner-logo--cambridge img {
+    max-width: 118px;
+    height: 45px;
   }
 }
 
